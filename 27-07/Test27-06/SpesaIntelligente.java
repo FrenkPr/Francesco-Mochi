@@ -51,8 +51,10 @@ public class SpesaIntelligente
             System.out.println(product);
         }
         
+        //prints out total number of products
         System.out.println("\nNUMERO TOTALE DEGLI ARTICOLI: " + productsPurchased.size());
 
+        //checks if the purchaser thought to the breakfast
         if(productsPurchased.contains("pane") && productsPurchased.contains("latte"))
         {
             System.out.println("\nHai pensato alla colazione!");
