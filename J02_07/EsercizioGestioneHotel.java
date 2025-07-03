@@ -44,7 +44,7 @@ class Room
         price = newPrice;
     }
 
-    //prints camera details
+    //prints room details
     public void details()
     {
         System.out.println("Number of room: " + roomNumber + "\nPrice: " + price);
@@ -90,15 +90,27 @@ class Suite extends Room
     @Override
     public void details()
     {
+        //calls the father method
         super.details();
+
         System.out.println("Extra services: " + extraServices);
     }
 
+    //override of details method
+    //with print price option
     @Override
     public void details(boolean printPrice)
     {
+        //calls the father method
         super.details(printPrice);
-        System.out.println("Extra services: " + extraServices);
+
+        //we use this to avoid printing
+        //a double time the message when the printPrice
+        //option is true
+        if(!printPrice)
+        {
+            System.out.println("Extra services: " + extraServices);
+        }
     }
 }
 
@@ -140,23 +152,29 @@ class Hotel
             return;
         }
 
+        //checks if the room number has already been inserted
         for (int i = 0; i < roomList.size(); i++)
         {
             if(roomList.get(i).getRoomNumber() == newRoom.getRoomNumber())
             {
                 int validRoomNumber = 0;
-                
+
                 System.out.println("Number of room " + roomList.get(i).getRoomNumber() + " already existing, insert a new room number");
                 validRoomNumber = GlobalScanner.readIntInput();
-
+                
                 newRoom.setRoomNumber(validRoomNumber);
 
                 //reset the index to reiterate and check that
                 //the number of room is unique
-                i = 0;
+                i = -1;
             }
         }
 
+        //room added message info
+        System.out.println("Room n." + newRoom.getRoomNumber() + " added successfully to the system");
+        System.out.println("Checking the next room\n");
+
+        //adding the new room to the list
         roomList.add(newRoom);
     }
 
@@ -201,17 +219,18 @@ public class EsercizioGestioneHotel
 
         hotel.addRoom(null);
         hotel.addRoom(new Room(10, 200.0f));
+        hotel.addRoom(new Room(12, 250.0f));
         hotel.addRoom(new Room(11, 250.0f));
 
         hotel.addRoom(new Suite(11, 500.0f, ""));
         hotel.addRoom(new Suite(50, 1000.0f, "Champagne with lobster and bed with extra comfort"));
         hotel.addRoom(new Suite(50, 1000.0f, "larger bed with extra comfort and bath tub"));
 
-        System.out.println("HOTEL " + hotelName + " DETAILS:");
+        System.out.println("HOTEL \"" + hotelName + "\" DETAILS:");
 
         hotel.printRoomData(true);
 
-        System.out.println("\nHOTEL " + hotelName + " DETAILS WITH NO PRICE:");
+        System.out.println("\nHOTEL \"" + hotelName + "\" DETAILS WITH NO PRICE:");
 
         hotel.printRoomData(false);
 
