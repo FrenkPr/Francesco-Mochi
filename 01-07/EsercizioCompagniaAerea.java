@@ -1,33 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
-
-class GlobalScanner
-{
-    private static Scanner numScanner = null;
-    private static Scanner stringScanner = null;
-
-    public static void InitScannerInputs()
-    {
-        numScanner = new Scanner(System.in);
-        stringScanner = new Scanner(System.in);
-    }
-
-    public static int readIntInput()
-    {
-        return numScanner == null ? 0 : numScanner.nextInt();
-    }
-
-    public static String readStringInput()
-    {
-        return stringScanner == null ? "" : stringScanner.nextLine();
-    }
-
-    public static void CloseScannerInputs()
-    {
-        numScanner.close();
-        stringScanner.close();
-    }
-}
 
 class Airplane
 {
@@ -190,7 +161,7 @@ class Airline
         pilots = new ArrayList<>();
     }
 
-    //add airplane to the fleet
+    //adds an airplane to the fleet
     public void addAirplane()
     {
         //local variables init
@@ -203,7 +174,7 @@ class Airline
         airplaneModel = GlobalScanner.readStringInput();
 
         //airplaneNumSeats input
-        System.out.println("Insert the airplane model");
+        System.out.println("Insert the number of seats");
         airplaneNumSeats = GlobalScanner.readIntInput();
 
         //airplaneIdCode input
@@ -214,153 +185,91 @@ class Airline
         fleet.add(new Airplane(airplaneModel, airplaneNumSeats, airplaneIdCode));
         System.out.println("Airplane added successfully");
     }
+
+    //adds a pilot
+    public void addPilot()
+    {
+        //local variables init
+        String pilotName = "";
+        String pilotNumLicense = "";
+        int pilotNumFlightHours = 0;
+
+        //airplaneModel input
+        System.out.println("Insert the pilot name");
+        pilotName = GlobalScanner.readStringInput();
+
+        //airplaneNumSeats input
+        System.out.println("Insert the pilot number of license");
+        pilotNumLicense = GlobalScanner.readStringInput();
+
+        //airplaneIdCode input
+        System.out.println("Insert the total number of flight hours");
+        pilotNumFlightHours = GlobalScanner.readIntInput();
+
+        //adding a new pilot to the list
+        pilots.add(new Pilot(pilotName, pilotNumLicense, pilotNumFlightHours));
+        System.out.println("Pilot added successfully");
+    }
+
+    //print airline data
+    public void printData()
+    {
+        System.out.println("Airline \"" + name + "\" data:\nAIRPLANES:");
+
+        for (Airplane airplane : fleet)
+        {
+            airplane.printData();
+        }
+
+        System.out.println("\nPILOTS:");
+
+        for (Pilot pilot : pilots)
+        {
+            pilot.printData();
+        }
+    }
 }
 
 public class EsercizioCompagniaAerea
 {
     public static void main(String[] args)
     {
+        //inits scanner inputs
+        GlobalScanner.InitScannerInputs();
+
         //variables declaration & init
+        Airline airline = null;
+        String airlineName = "";
+
+        //airlineName input
+        System.out.println("Insert the name of an airline");
+        airlineName = GlobalScanner.readStringInput();
         
-
-        int menuOption = 0;
-        ArrayList<Student> students = new ArrayList<>();
-        Student s = new Student("Pippo", 10);
-
-        System.out.println("Welcome to the student software!\nHere are the current students already inserted in the system");
-
-        s.printData();
-
-        //alters the mark with valid and non valid marks
-        s.setMark(11);
-        s.setMark(8);
-        s.setMark(-11);
-
-        System.out.println(s.getName() + " updated mark: " + s.getMark());
-
-        do
+        //if the input is not valid
+        while(airlineName.isEmpty())
         {
-            //menu description
-            System.out.println("\nChoose which operations you want to excute:");
-            System.out.println("1: add a student to the system");
-            System.out.println("2: print the data of a student");
-            System.out.println("3: search a student in the system");
-            System.out.println("4: edit the mark of a student");
-            System.out.println("0: exit");
-
-            //menu input
-            menuOption = numScanner.nextInt();
-
-            switch(menuOption)
-            {
-                case 1:
-                    s = null;
-                    String studentName = "";
-                    int studentMark = 0;
-
-                    //studentName input
-                    System.out.println("Insert student name");
-                    studentName = stringScanner.nextLine();
-
-                    //studentMark input
-                    System.out.println("Insert student mark");
-                    studentMark = numScanner.nextInt();
-
-                    s = new Student(studentName, studentMark);
-                    students.add(s);
-
-                    System.out.println("Student " + s.getName() + " added successfully to the system");
-                    break;
-
-                case 2:
-                    int studentIndex = 0;
-                    studentName = "";
-
-                    //studentName input
-                    System.out.println("Insert student name");
-                    studentName = stringScanner.nextLine();
-
-                    //searches for the student in the given list
-                    studentIndex = Student.searchStudent(students, studentName);
-                    
-                    //if student not found, exits from the switch
-                    //and turns back to the menu
-                    if(studentIndex == -1)
-                    {
-                        System.out.println("Student not found in the system");
-                        break;
-                    }
-
-                    //prints student data if found in the system
-                    students.get(studentIndex).printData();
-                    break;
-                
-                case 3:
-                    studentIndex = 0;
-                    studentName = "";
-
-                    //studentName input
-                    System.out.println("Insert student name");
-                    studentName = stringScanner.nextLine();
-
-                    //searches for the student in the given list
-                    studentIndex = Student.searchStudent(students, studentName);
-                    
-                    //if student not found, exits from the switch
-                    //and turns back to the menu
-                    if(studentIndex == -1)
-                    {
-                        System.out.println("Student " + studentName + " not found in the system");
-                    }
-
-                    else
-                    {
-                        //prints if the student has been found
-                        System.out.println("Student " + students.get(studentIndex) + " found in the system");
-                    }
-                    break;
-
-                case 4:
-                    studentIndex = 0;
-                    studentName = "";
-                    studentMark = 0;
-
-                    //studentName input
-                    System.out.println("Insert student name");
-                    studentName = stringScanner.nextLine();
-
-                    //searches for the student in the given list
-                    studentIndex = Student.searchStudent(students, studentName);
-                    
-                    //if student not found, exits from the switch
-                    //and turns back to the menu
-                    if(studentIndex == -1)
-                    {
-                        System.out.println("Student " + studentName + " not found in the system");
-                        break;
-                    }
-
-                    //studentMark input
-                    System.out.println("Insert new mark");
-                    studentMark = numScanner.nextInt();
-                    
-                    students.get(studentIndex).setMark(studentMark);
-                    break;
-
-                //exit from the menu
-                case 0:
-                    break;
-
-                default:
-                    System.out.println("Insert a valid option");
-                    break;
-
-            }
+            System.out.println("Insert a valid name of an airline");
+            airlineName = GlobalScanner.readStringInput();
         }
-        while(menuOption != 0);
 
-        //closes scanners usage
-        numScanner.close();
-        stringScanner.close();
+        //creates a new airline
+        airline = new Airline(airlineName);
+
+        //adds airplanes to the airline
+        airline.addAirplane();
+        airline.addAirplane();
+        airline.addAirplane();
+
+        //adds pilots to the airline
+        airline.addPilot();
+        airline.addPilot();
+        airline.addPilot();
+        airline.addPilot();
+
+        //prints out all airline data
+        airline.printData();
+
+        //closes scanner inputs
+        GlobalScanner.CloseScannerInputs();
     }
 }
