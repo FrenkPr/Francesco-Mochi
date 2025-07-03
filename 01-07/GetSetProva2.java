@@ -1,11 +1,11 @@
-class Persona
+class Person
 {
     // Campi privati (incapsulamento)
     private String nome;
     private int eta;
 
     // Costruttore pubblico
-    public Persona(String nome, int eta) {
+    public Person(String nome, int eta) {
         this.nome = nome;
         this.eta = eta;
     }
@@ -18,9 +18,9 @@ class Persona
     // Metodo pubblico che fa uso del metodo privato
     public void stampaStatus() {
         if (verificaMaggiorenne()) {
-            System.out.println(this.nome + " è maggiorenne.");
+            System.out.println(this.nome + " e' maggiorenne.");
         } else {
-            System.out.println(this.nome + " non è maggiorenne.");
+            System.out.println(this.nome + " non e' maggiorenne.");
         }
     }
 }
@@ -29,9 +29,7 @@ public class GetSetProva2
 {
     public static void main(String[] args)
     {
-        Person myObj = new Person();
-        myObj.setName("Pippo"); // setting name value = "pippo"
-        
-        System.out.println(myObj.getName());
+        Person myObj = new Person("Lillo", 23);
+        myObj.stampaStatus();
     }
 }
