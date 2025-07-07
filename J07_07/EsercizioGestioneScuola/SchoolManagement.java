@@ -16,15 +16,11 @@ public class SchoolManagement
         {
             schoolPerson.roleDescription();
 
-            if(schoolPerson instanceof Student)
+            //if the school person implements the
+            //registrable interface
+            if(schoolPerson instanceof Registrable)
             {
-                ((Student)schoolPerson).registration();
-            }
-
-            //if it's a teacher
-            else
-            {
-                ((Teacher)schoolPerson).registration();
+                ((Registrable)schoolPerson).registration();
             }
         }
     }
