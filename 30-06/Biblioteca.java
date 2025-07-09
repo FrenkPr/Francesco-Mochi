@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.time.LocalDate;
 
 class User
 {
@@ -31,8 +30,6 @@ class Book
     public String title;
     public String author;
     public boolean isAvailable;
-    public LocalDate expireDate;
-
 
     //constructor method
     public Book(String title, String author, boolean isAvailable)
@@ -40,7 +37,6 @@ class Book
         this.title = title;
         this.author = author;
         this.isAvailable = isAvailable;
-        expireDate = LocalDate.of(2025, 7, 10);
     }
 
     //print book data method
@@ -69,7 +65,13 @@ class Library
     {
         books.add(book);
 
-        System.out.println("Book " + book.title + " added to the library");
+        System.out.println("Book \"" + book.title + "\" added to the library");
+    }
+
+    //add a book to the list - method
+    public Book getBook(int index)
+    {
+        return books.get(index);
     }
 
     //prints book data in the list - method
@@ -100,11 +102,11 @@ class Library
 
         if(userIndex == -1)
         {
-            System.out.println("User " + username + " not found");
+            System.out.println("User \"" + username + "\" not found");
             return;
         }
         
-        System.out.println("User " + username + " borrowed books:");
+        System.out.println("User \"" + username + "\" borrowed books:");
 
         for (Book userBook : users.get(userIndex).booksBorrowed)
         {
@@ -116,37 +118,45 @@ class Library
     public void borrowBook(String title, String personName)
     {
         User userThatBorrows = null;
+
+        //searches for the user and the book specified
+        int userIndex = searchUser(personName);
         int bookIndex = searchBook(title);
 
-        //checks if the user is already in the list
-        for (int i = 0; i < users.size(); i++)
-        {
-            if(users.get(i).name.compareToIgnoreCase(personName) == 0)
-            {
-                userThatBorrows = users.get(i);
-                break;
-            }
-        }
-
         //creates a new user and adds him to the list if not present
-        if(userThatBorrows == null)
+        if(userIndex == -1)
         {
             userThatBorrows = new User(personName);
             users.add(userThatBorrows);
         }
 
-        //checks if the user wants to borrow more than 3 books.
-        //If so, the book won't be added to the list
-        if(userThatBorrows.booksBorrowed.size() >= 3)
+        else
         {
-            System.out.println("You can borrow maximum 3 books per time");
-            return;
+            userThatBorrows = users.get(userIndex);
         }
 
         //in case the book has not been found in the library
         if(bookIndex == -1)
         {
-            System.out.println("Book " + title + " not available in the library");
+            System.out.println("Book \"" + title + "\" not available in the library");
+            return;
+        }
+
+        //checks if the user wants to borrow more than 3 books.
+        //If so, the book won't be added to the list
+        else if(userThatBorrows.booksBorrowed.size() >= 3)
+        {
+            System.out.println("You can borrow maximum 3 books per time");
+            return;
+        }
+
+        //searches for the first available book
+        bookIndex = searchBook(title, true);
+
+        //in case the book is already borrowed
+        if(bookIndex == -1)
+        {
+            System.out.println("Book \"" + title + "\" has been borrowed");
             return;
         }
 
@@ -156,39 +166,76 @@ class Library
             books.get(bookIndex).isAvailable = false;
             userThatBorrows.booksBorrowed.add(books.get(bookIndex));
 
-            System.out.println("Book " + title + " borrowed");
-        }
-
-        //in case the book is already borrowed
-        else
-        {
-            System.out.println("Book " + title + " is already in borrow");
+            System.out.println("Book \"" + title + "\" borrowed");
         }
     }
 
     //returns a book in the list
-    public void returnBook(String title)
+    public void returnBook(String title, String personName, int daysPassedToBorrow)
     {
-        int bookIndex = searchBook(title);
+        User userThatBorrowed = null;
+
+        //searches for the user and the book specified
+        int userIndex = searchUser(personName);
+        int bookIndex = searchBook(title); //searches for the first book found in the list
+
+        //exit if the user is not present
+        if(userIndex == -1)
+        {
+            System.out.println("You must be registered to return a book first");
+            return;
+        }
+
+        else
+        {
+            userThatBorrowed = users.get(userIndex);
+        }
 
         //in case the book has not been found in the library
         if(bookIndex == -1)
         {
-            System.out.println("You can't return a book not available in the library.\nBook " + title + " not available");
+            System.out.println("You can't return a book not available in the library.\nBook \"" + title + "\" not available");
+            return;
+        }
+
+        //checks if the user has borrowed at least 1 book.
+        //If so, the book can't be returned
+        else if(userThatBorrowed.booksBorrowed.isEmpty())
+        {
+            System.out.println("You must borrow a book first");
+            return;
+        }
+
+        //searches for the first borrowed book
+        bookIndex = searchBook(title, false);
+
+        //in case the book was not borrowed
+        if(bookIndex == -1)
+        {
+            System.out.println("The book \"" + title + "\" not borrowed");
+            return;
+        }
+
+        else if(!userThatBorrowed.booksBorrowed.contains(books.get(bookIndex)))
+        {
+            System.out.println("The book \"" + title + "\" not borrowed");
             return;
         }
 
         //if the book is borrowed
         if(!books.get(bookIndex).isAvailable)
         {
-            books.get(bookIndex).isAvailable = true;
-            System.out.println("Book " + title + " returned");
-        }
+            //penality check
+            if(daysPassedToBorrow > 14)
+            {
+                System.out.println("Book borrow got over 14 days. PENALITY!");
+            }
 
-        //in case the book was already returned
-        else
-        {
-            System.out.println("The book " + title + " was already returned");
+            //returning book
+            books.get(bookIndex).isAvailable = true;
+            userThatBorrowed.booksBorrowed.remove(books.get(bookIndex));
+
+            System.out.println("Book \"" + title + "\" returned");
         } 
     }
 
@@ -210,13 +257,33 @@ class Library
         return searchBookResult;
     }
 
+    //returns the first available or none book index if found.
+    //returns -1 if the book has not been found in the library
+    public int searchBook(String title, boolean searchFirstAvailable)
+    {
+        int searchBookResult = -1;
+
+        for (int i = 0; i < books.size(); i++)
+        {
+            //checks for the first available book or for the first not available
+            //book. Everything depends on the searchFirstAvailable parameter
+            if(books.get(i).title.compareToIgnoreCase(title) == 0 && books.get(i).isAvailable == searchFirstAvailable)
+            {
+                searchBookResult = i;
+                break;
+            }
+        }
+
+        return searchBookResult;
+    }
+
     public int searchUser(String username)
     {
         int userFound = -1;
 
-        for (int i = 0; i < books.size(); i++)
+        for (int i = 0; i < users.size(); i++)
         {
-            if(users.get(i).name.compareToIgnoreCase(username) == 0)
+            if(users.get(i).name.compareTo(username) == 0)
             {
                 userFound = i;
                 break;
@@ -279,20 +346,40 @@ public class Biblioteca
 
                 //search a book availability
                 case 3:
+                    int bookIndex = -1;
                     bookTitle = "";
 
                     //title input
                     System.out.println("Insert the book title to check the availability");
                     bookTitle = stringScanner.nextLine();
 
-                    if(library.searchBook(bookTitle) == -1)
+                    //searches for the first available book
+                    bookIndex = library.searchBook(bookTitle, true);
+
+                    if(bookIndex != -1)
+                    {
+                        if(library.getBook(bookIndex).isAvailable)
+                        {
+                            System.out.println("Book in the library available");
+                        }
+
+                        else
+                        {
+                            System.out.println("The book has been borrowed");
+                        }
+                    }
+
+                    //searches for the first book found in the list
+                    bookIndex = library.searchBook(bookTitle);
+
+                    if(bookIndex == -1)
                     {
                         System.out.println("Book not found in the library");
                     }
 
                     else
                     {
-                        System.out.println("Book in the library available");
+                        System.out.println("The book has been borrowed");
                     }
                     break;
 
@@ -314,13 +401,32 @@ public class Biblioteca
 
                 //return a book
                 case 5:
+                    int daysPassedToBorrow = 0;
                     bookTitle = "";
+                    userThatBorrows = "";
+
+                    //title input
+                    System.out.println("Insert the name of the user");
+                    userThatBorrows = stringScanner.nextLine();
 
                     //title input
                     System.out.println("Insert the book title you want to return");
                     bookTitle = stringScanner.nextLine();
 
-                    library.returnBook(bookTitle);
+
+                    //daysPassedToBorrow input
+                    System.out.println("How many days have been passed to the borrow?");
+                    daysPassedToBorrow = numScanner.nextInt();
+
+                    //if the input is not valid
+                    while(daysPassedToBorrow < 0)
+                    {
+                        //daysPassedToBorrow input
+                        System.out.println("Insert a valid number");
+                        daysPassedToBorrow = numScanner.nextInt();
+                    }
+
+                    library.returnBook(bookTitle, userThatBorrows, daysPassedToBorrow);
                     break;
 
                 case 6:
