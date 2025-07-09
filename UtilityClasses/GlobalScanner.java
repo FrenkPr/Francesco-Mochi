@@ -1,5 +1,3 @@
-package UtilityClasses;
-
 import java.util.Scanner;
 
 public class GlobalScanner
