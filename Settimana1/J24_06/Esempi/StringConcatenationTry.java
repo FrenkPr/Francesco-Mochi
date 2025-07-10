@@ -1,4 +1,4 @@
-public class AnotherOne
+public class StringConcatenationTry
 {
 	public static void main(String[] args)
 	{
