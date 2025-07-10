@@ -1,4 +1,4 @@
-// Definizione della classe Singleton
+// defining singleton class
 public class Singleton
 {
     private static Singleton instance; //private instance of the singleton class
@@ -20,11 +20,5 @@ public class Singleton
 
         // returns the unique instance
         return instance;
-    }
-
-    // Metodo di esempio che può essere chiamato sull'istanza Singleton
-    public void DoSomething()
-    {
-        System.out.println("Singleton: DoSomething() called");
     }
 }
