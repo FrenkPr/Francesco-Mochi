@@ -1,3 +1,6 @@
+#application.properties ignore to don't show password commit
+application.properties
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
